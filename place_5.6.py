@@ -97,10 +97,53 @@ class Test_new_location():
         assert 200 == result_get.status_code
         print("Status code is " + str(result_get.status_code))
         check_get_info = result_get.json()
-        check_address = check_get_info.get('address')
-        print("Address is " + check_address)
-        assert check_address == "100  D8FdDF Lenina street, RU", "Sad"
+        check_msg = check_get_info.get('address')
+        print("Address is " + check_msg)
+        assert check_msg == "100  D8FdDF Lenina street, RU", "Sad"
         print("Address is ok!")
+
+        """Удаление локации - 200"""
+        delete_resource = "/maps/api/place/delete/json"
+        delete_url = base_url + delete_resource + key
+        print(delete_url)
+        json_for_delete_location = {"place_id": place_id}
+        result_delete = requests.delete(delete_url, json=json_for_delete_location)
+        print(result_delete.text)
+        assert 200 == result_delete.status_code, "Sad"
+        print("Status code is " + str(result_delete.status_code))
+        check_delete_info = result_delete.json()
+        check_status = check_delete_info.get('status')
+        print("Status is " + check_status)
+        assert check_status == "OK", "Sad"
+        print("Status is OK!")
+
+        """Удаление локации - 404"""
+        delete_resource = "/maps/api/place/delete/json"
+        delete_url = base_url + delete_resource + key
+        print(delete_url)
+        json_for_delete_location = {"place_id": 5555}
+        result_delete = requests.delete(delete_url, json=json_for_delete_location)
+        print(result_delete.text)
+        assert 404 == result_delete.status_code, "Sad"
+        print("Status code is " + str(result_delete.status_code))
+        check_delete_info = result_delete.json()
+        check_delete_msg = check_delete_info.get('msg')
+        print("Message: " + check_delete_msg)
+        assert check_delete_msg == "Delete operation failed, looks like the data doesn't exists", "Sad"
+        print("Message is ok!")
+
+        """Проверка удаления новой локации"""
+        result_get = requests.get(get_url)
+        print(result_get.text)
+        assert 404 == result_get.status_code
+        print("Status code is " + str(result_get.status_code))
+        check_get_info = result_get.json()
+        check_msg = check_get_info.get('msg')
+        print("Message is " + check_msg)
+        assert check_msg == "Get operation failed, looks like place_id  doesn't exists", "Sad"
+        print("Message is ok!")
+
+        print("Тестирование test_new_location PASSED")
 
 new_place = Test_new_location()
 new_place.test_create_new_location()
