@@ -1,2 +1,2 @@
 # AutoAPI
-Me lessons from stepik
+My lessons from stepik
