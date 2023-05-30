@@ -53,5 +53,54 @@ class Test_new_location():
         print("Status code is " + str(result_get.status_code))
 
 
+        """Изменение новой локации - 200"""
+        put_resource = "/maps/api/place/update/json"
+        put_url = base_url + put_resource + key
+        print(put_url)
+        json_for_update_location = {
+            "place_id": place_id,
+            "address": "100  D8FdDF Lenina street, RU",
+            "key": "qaclick123"
+        }
+        result_put = requests.put(put_url, json=json_for_update_location)
+        print(result_put.text)
+        assert 200 == result_put.status_code, "Sad"
+        print("Status code is " + str(result_put.status_code))
+        check_put_info = result_put.json()
+        check_msg = check_put_info.get('msg')
+        print("Message is " + check_msg)
+        assert check_msg == "Address successfully updated", "Sad"
+        print("Message is ok!")
+
+        """Изменение новой локации - 404"""
+        put_resource = "/maps/api/place/update/json"
+        put_url = base_url + put_resource + key
+        print(put_url)
+        json_for_update_location = {
+            "place_id": 556,
+            "address": "100  D8FdDF Lenina street, RU",
+            "key": "qaclick123"
+        }
+        result_put = requests.put(put_url, json=json_for_update_location)
+        print(result_put.text)
+        assert 404 == result_put.status_code, "Sad"
+        print("Status code is " + str(result_put.status_code))
+        check_put_info = result_put.json()
+        check_msg = check_put_info.get('msg')
+        print("Message is " + check_msg)
+        assert check_msg == "Update address operation failed, looks like the data doesn't exists", "Sad"
+        print("Message is ok!")
+
+        """Проверка изменения новой локации"""
+        result_get = requests.get(get_url)
+        print(result_get.text)
+        assert 200 == result_get.status_code
+        print("Status code is " + str(result_get.status_code))
+        check_get_info = result_get.json()
+        check_address = check_get_info.get('address')
+        print("Address is " + check_address)
+        assert check_address == "100  D8FdDF Lenina street, RU", "Sad"
+        print("Address is ok!")
+
 new_place = Test_new_location()
 new_place.test_create_new_location()
